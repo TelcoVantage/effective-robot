@@ -1,0 +1,84 @@
+{
+  "name": "Write Dropped Call Log Row",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/flows/datatables/${input.TABLE_ID}/rows",
+      "requestType": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "UserAgent": "PureCloudIntegrations/1.0"
+      },
+      "requestTemplate": "{\n  \"key\": \"$esc.jsonEncode(\"$!{input.KEY}\")\",\n  \"CallStartTime\": \"$esc.jsonEncode(\"$!{input.CALL_START_TIME}\")\",\n  \"CallEndTime\": \"$esc.jsonEncode(\"$!{input.CALL_END_TIME}\")\",\n  \"DisconnectType\": \"$esc.jsonEncode(\"$!{input.DISCONNECT_TYPE}\")\",\n  \"DropCategory\": \"$esc.jsonEncode(\"$!{input.DROP_CATEGORY}\")\",\n  \"ErrorCode\": \"$esc.jsonEncode(\"$!{input.ERROR_CODE}\")\",\n  \"ErrorMessage\": \"$esc.jsonEncode(\"$!{input.ERROR_MESSAGE}\")\",\n  \"Direction\": \"$esc.jsonEncode(\"$!{input.DIRECTION}\")\",\n  \"ANI\": \"$esc.jsonEncode(\"$!{input.ANI}\")\",\n  \"DNIS\": \"$esc.jsonEncode(\"$!{input.DNIS}\")\",\n  \"QueueName\": \"$esc.jsonEncode(\"$!{input.QUEUE_NAME}\")\",\n  \"AgentName\": \"$esc.jsonEncode(\"$!{input.AGENT_NAME}\")\",\n  \"LookupStatus\": \"$esc.jsonEncode(\"$!{input.LOOKUP_STATUS}\")\",\n  \"Reviewed\": \"No\"\n}"
+    },
+    "response": {
+      "translationMap": {},
+      "translationMapDefaults": {},
+      "successTemplate": "${rawResult}"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "title": "Write Dropped Call Log Row input",
+        "type": "object",
+        "properties": {
+          "TABLE_ID": {
+            "type": "string",
+            "description": "ID (GUID) of the Dropped Call Log data table"
+          },
+          "KEY": {
+            "type": "string",
+            "description": "Row key = conversation ID"
+          },
+          "CALL_START_TIME": {
+            "type": "string"
+          },
+          "CALL_END_TIME": {
+            "type": "string"
+          },
+          "DISCONNECT_TYPE": {
+            "type": "string"
+          },
+          "DROP_CATEGORY": {
+            "type": "string"
+          },
+          "ERROR_CODE": {
+            "type": "string"
+          },
+          "ERROR_MESSAGE": {
+            "type": "string"
+          },
+          "DIRECTION": {
+            "type": "string"
+          },
+          "ANI": {
+            "type": "string"
+          },
+          "DNIS": {
+            "type": "string"
+          },
+          "QUEUE_NAME": {
+            "type": "string"
+          },
+          "AGENT_NAME": {
+            "type": "string"
+          },
+          "LOOKUP_STATUS": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}

@@ -1,0 +1,75 @@
+{
+  "name": "Get Conversation Drop Details",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/conversations/${input.CONVERSATION_ID}",
+      "requestType": "GET",
+      "headers": {},
+      "requestTemplate": "${input.rawRequest}"
+    },
+    "response": {
+      "translationMap": {
+        "errorCodes": "$.participants[*].attributes.ErrorCode",
+        "errorMessages": "$.participants[*].attributes.ErrorMessage",
+        "queueNames": "$.participants[?(@.purpose=='acd')].name",
+        "agentNames": "$.participants[?(@.purpose=='agent')].name",
+        "startTime": "$.startTime",
+        "endTime": "$.endTime"
+      },
+      "translationMapDefaults": {
+        "errorCodes": "[]",
+        "errorMessages": "[]",
+        "queueNames": "[]",
+        "agentNames": "[]",
+        "startTime": "\"\"",
+        "endTime": "\"\""
+      },
+      "successTemplate": "{\"errorCode\": ${successTemplateUtils.firstFromArray(\"${errorCodes}\", \"${esc.quote}${esc.quote}\")}, \"errorMessage\": ${successTemplateUtils.firstFromArray(\"${errorMessages}\", \"${esc.quote}${esc.quote}\")}, \"queueName\": ${successTemplateUtils.firstFromArray(\"${queueNames}\", \"${esc.quote}${esc.quote}\")}, \"agentName\": ${successTemplateUtils.firstFromArray(\"${agentNames}\", \"${esc.quote}${esc.quote}\")}, \"callStartTime\": #if($startTime)${startTime}#else\"\"#end, \"callEndTime\": #if($endTime)${endTime}#else\"\"#end}"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "title": "Get Conversation Drop Details input",
+        "type": "object",
+        "properties": {
+          "CONVERSATION_ID": {
+            "type": "string",
+            "description": "Genesys Cloud conversation ID"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "title": "Get Conversation Drop Details output",
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "callStartTime": {
+            "type": "string"
+          },
+          "callEndTime": {
+            "type": "string"
+          },
+          "queueName": {
+            "type": "string"
+          },
+          "agentName": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}

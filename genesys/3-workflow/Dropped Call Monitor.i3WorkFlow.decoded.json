@@ -1,0 +1,3476 @@
+{
+  "nextTrackingNumber": 23,
+  "defaultLanguage": "en-US",
+  "description": "Triggered by v2.detail.events.conversation.{id}.customer.end for voice calls that ended with an our-side disconnect type. Reads the ErrorCode / ErrorMessage participant attributes and writes a row to the 'Dropped Call Log' data table.",
+  "initialSequence": "aca2c49b-977b-404e-9535-7e354946cb06",
+  "name": "Dropped Call Monitor",
+  "uiMetaData": {
+    "bridgeServerActions": [],
+    "screenPops": [],
+    "actionServiceActions": [
+      {
+        "id": "custom_-_98adf65a-1349-4c86-9ad3-6db0f5f73a1b",
+        "name": "Get Conversation Drop Details",
+        "category": "Genesys Cloud Data Actions",
+        "contract": {
+          "input": {
+            "inputSchemaFlattened": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "CONVERSATION_ID": {
+                    "type": "string",
+                    "name": "CONVERSATION_ID",
+                    "required": false
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "output": {
+            "errorSchemaFlattened": {
+              "schema": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "ErrorBody",
+                "description": "Detailed information about an error response.",
+                "type": "object",
+                "required": [
+                  "errorCode",
+                  "status",
+                  "userMessage"
+                ],
+                "properties": {
+                  "errors": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "name": "errors",
+                    "required": false
+                  },
+                  "errorCode": {
+                    "description": "A code unique to this error.",
+                    "type": "string",
+                    "name": "errorCode",
+                    "required": false
+                  },
+                  "status": {
+                    "description": "The HTTP status code for this message (400, 401, 403, 404, 500, etc.)",
+                    "type": "integer",
+                    "name": "status",
+                    "required": false
+                  },
+                  "correlationId": {
+                    "description": "The correlation Id or context Id for this message. If left blank the Public API will look at the HTTP response header 'ININ-Correlation-Id' instead.",
+                    "type": "string",
+                    "name": "correlationId",
+                    "required": false
+                  },
+                  "entityId": {
+                    "description": "The ID of the entity this error refers to. Only used in BackendErrorBody instances within the errors array.",
+                    "type": "string",
+                    "name": "entityId",
+                    "required": false
+                  },
+                  "entityName": {
+                    "description": "The name of the entity this error refers to. Only used in BackendErrorBody instances within the errors array.",
+                    "type": "string",
+                    "name": "entityName",
+                    "required": false
+                  },
+                  "userMessage": {
+                    "description": "A customer friendly message. This should be a complete sentence, use proper grammar and only include information useful to a customer. This is not a dev message and should not include things like Org Id",
+                    "type": "string",
+                    "name": "userMessage",
+                    "required": false
+                  },
+                  "userParamsMessage": {
+                    "description": "This is the same as message except it uses template fields for variable replacement. For instance: 'User {username} was not found'",
+                    "type": "string",
+                    "name": "userParamsMessage",
+                    "required": false
+                  },
+                  "userParams.key": {
+                    "description": "Used in conjunction with userParamsMessage. These are the template parameters. For instance: UserParam.key = 'username', UserParam.value = 'john.doe'",
+                    "type": "array",
+                    "items": {
+                      "description": "Key name of userParam  pair.",
+                      "type": "string"
+                    },
+                    "name": "userParams.key",
+                    "required": false
+                  },
+                  "userParams.value": {
+                    "description": "Used in conjunction with userParamsMessage. These are the template parameters. For instance: UserParam.key = 'username', UserParam.value = 'john.doe'",
+                    "type": "array",
+                    "items": {
+                      "description": "Value of userParam  pair.",
+                      "type": "string"
+                    },
+                    "name": "userParams.value",
+                    "required": false
+                  },
+                  "details.errorCode": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "name": "details.errorCode",
+                    "required": false
+                  },
+                  "details.fieldName": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "name": "details.fieldName",
+                    "required": false
+                  },
+                  "details.entityId": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "name": "details.entityId",
+                    "required": false
+                  },
+                  "details.entityName": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "name": "details.entityName",
+                    "required": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "successSchemaFlattened": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "errorCode": {
+                    "type": "string",
+                    "name": "errorCode",
+                    "required": false
+                  },
+                  "errorMessage": {
+                    "type": "string",
+                    "name": "errorMessage",
+                    "required": false
+                  },
+                  "callStartTime": {
+                    "type": "string",
+                    "name": "callStartTime",
+                    "required": false
+                  },
+                  "callEndTime": {
+                    "type": "string",
+                    "name": "callEndTime",
+                    "required": false
+                  },
+                  "queueName": {
+                    "type": "string",
+                    "name": "queueName",
+                    "required": false
+                  },
+                  "agentName": {
+                    "type": "string",
+                    "name": "agentName",
+                    "required": false
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "result": "ok",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "CONVERSATION_ID": {
+              "type": "string",
+              "name": "CONVERSATION_ID",
+              "required": false
+            }
+          },
+          "additionalProperties": true
+        },
+        "successSchema": {
+          "type": "object",
+          "properties": {
+            "errorCode": {
+              "type": "string",
+              "name": "errorCode",
+              "required": false
+            },
+            "errorMessage": {
+              "type": "string",
+              "name": "errorMessage",
+              "required": false
+            },
+            "callStartTime": {
+              "type": "string",
+              "name": "callStartTime",
+              "required": false
+            },
+            "callEndTime": {
+              "type": "string",
+              "name": "callEndTime",
+              "required": false
+            },
+            "queueName": {
+              "type": "string",
+              "name": "queueName",
+              "required": false
+            },
+            "agentName": {
+              "type": "string",
+              "name": "agentName",
+              "required": false
+            }
+          },
+          "additionalProperties": true
+        },
+        "errorSchema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "ErrorBody",
+          "description": "Detailed information about an error response.",
+          "type": "object",
+          "required": [
+            "errorCode",
+            "status",
+            "userMessage"
+          ],
+          "properties": {
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "name": "errors",
+              "required": false
+            },
+            "errorCode": {
+              "description": "A code unique to this error.",
+              "type": "string",
+              "name": "errorCode",
+              "required": false
+            },
+            "status": {
+              "description": "The HTTP status code for this message (400, 401, 403, 404, 500, etc.)",
+              "type": "integer",
+              "name": "status",
+              "required": false
+            },
+            "correlationId": {
+              "description": "The correlation Id or context Id for this message. If left blank the Public API will look at the HTTP response header 'ININ-Correlation-Id' instead.",
+              "type": "string",
+              "name": "correlationId",
+              "required": false
+            },
+            "entityId": {
+              "description": "The ID of the entity this error refers to. Only used in BackendErrorBody instances within the errors array.",
+              "type": "string",
+              "name": "entityId",
+              "required": false
+            },
+            "entityName": {
+              "description": "The name of the entity this error refers to. Only used in BackendErrorBody instances within the errors array.",
+              "type": "string",
+              "name": "entityName",
+              "required": false
+            },
+            "userMessage": {
+              "description": "A customer friendly message. This should be a complete sentence, use proper grammar and only include information useful to a customer. This is not a dev message and should not include things like Org Id",
+              "type": "string",
+              "name": "userMessage",
+              "required": false
+            },
+            "userParamsMessage": {
+              "description": "This is the same as message except it uses template fields for variable replacement. For instance: 'User {username} was not found'",
+              "type": "string",
+              "name": "userParamsMessage",
+              "required": false
+            },
+            "userParams.key": {
+              "description": "Used in conjunction with userParamsMessage. These are the template parameters. For instance: UserParam.key = 'username', UserParam.value = 'john.doe'",
+              "type": "array",
+              "items": {
+                "description": "Key name of userParam  pair.",
+                "type": "string"
+              },
+              "name": "userParams.key",
+              "required": false
+            },
+            "userParams.value": {
+              "description": "Used in conjunction with userParamsMessage. These are the template parameters. For instance: UserParam.key = 'username', UserParam.value = 'john.doe'",
+              "type": "array",
+              "items": {
+                "description": "Value of userParam  pair.",
+                "type": "string"
+              },
+              "name": "userParams.value",
+              "required": false
+            },
+            "details.errorCode": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "name": "details.errorCode",
+              "required": false
+            },
+            "details.fieldName": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "name": "details.fieldName",
+              "required": false
+            },
+            "details.entityId": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "name": "details.entityId",
+              "required": false
+            },
+            "details.entityName": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "name": "details.entityName",
+              "required": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      {
+        "id": "custom_-_1674fde0-7eec-4152-9774-884ed1612281",
+        "name": "Write Dropped Call Log Row",
+        "category": "Genesys Cloud Data Actions",
+        "contract": {
+          "input": {
+            "inputSchemaFlattened": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "TABLE_ID": {
+                    "type": "string",
+                    "name": "TABLE_ID",
+                    "required": false
+                  },
+                  "KEY": {
+                    "type": "string",
+                    "name": "KEY",
+                    "required": false
+                  },
+                  "CALL_START_TIME": {
+                    "type": "string",
+                    "name": "CALL_START_TIME",
+                    "required": false
+                  },
+                  "CALL_END_TIME": {
+                    "type": "string",
+                    "name": "CALL_END_TIME",
+                    "required": false
+                  },
+                  "DISCONNECT_TYPE": {
+                    "type": "string",
+                    "name": "DISCONNECT_TYPE",
+                    "required": false
+                  },
+                  "DROP_CATEGORY": {
+                    "type": "string",
+                    "name": "DROP_CATEGORY",
+                    "required": false
+                  },
+                  "ERROR_CODE": {
+                    "type": "string",
+                    "name": "ERROR_CODE",
+                    "required": false
+                  },
+                  "ERROR_MESSAGE": {
+                    "type": "string",
+                    "name": "ERROR_MESSAGE",
+                    "required": false
+                  },
+                  "DIRECTION": {
+                    "type": "string",
+                    "name": "DIRECTION",
+                    "required": false
+                  },
+                  "ANI": {
+                    "type": "string",
+                    "name": "ANI",
+                    "required": false
+                  },
+                  "DNIS": {
+                    "type": "string",
+                    "name": "DNIS",
+                    "required": false
+                  },
+                  "QUEUE_NAME": {
+                    "type": "string",
+                    "name": "QUEUE_NAME",
+                    "required": false
+                  },
+                  "AGENT_NAME": {
+                    "type": "string",
+                    "name": "AGENT_NAME",
+                    "required": false
+                  },
+                  "LOOKUP_STATUS": {
+                    "type": "string",
+                    "name": "LOOKUP_STATUS",
+                    "required": false
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "output": {
+            "errorSchemaFlattened": {
+              "schema": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "ErrorBody",
+                "description": "Detailed information about an error response.",
+                "type": "object",
+                "required": [
+                  "errorCode",
+                  "status",
+                  "userMessage"
+                ],
+                "properties": {
+                  "errors": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "name": "errors",
+                    "required": false
+                  },
+                  "errorCode": {
+                    "description": "A code unique to this error.",
+                    "type": "string",
+                    "name": "errorCode",
+                    "required": false
+                  },
+                  "status": {
+                    "description": "The HTTP status code for this message (400, 401, 403, 404, 500, etc.)",
+                    "type": "integer",
+                    "name": "status",
+                    "required": false
+                  },
+                  "correlationId": {
+                    "description": "The correlation Id or context Id for this message. If left blank the Public API will look at the HTTP response header 'ININ-Correlation-Id' instead.",
+                    "type": "string",
+                    "name": "correlationId",
+                    "required": false
+                  },
+                  "entityId": {
+                    "description": "The ID of the entity this error refers to. Only used in BackendErrorBody instances within the errors array.",
+                    "type": "string",
+                    "name": "entityId",
+                    "required": false
+                  },
+                  "entityName": {
+                    "description": "The name of the entity this error refers to. Only used in BackendErrorBody instances within the errors array.",
+                    "type": "string",
+                    "name": "entityName",
+                    "required": false
+                  },
+                  "userMessage": {
+                    "description": "A customer friendly message. This should be a complete sentence, use proper grammar and only include information useful to a customer. This is not a dev message and should not include things like Org Id",
+                    "type": "string",
+                    "name": "userMessage",
+                    "required": false
+                  },
+                  "userParamsMessage": {
+                    "description": "This is the same as message except it uses template fields for variable replacement. For instance: 'User {username} was not found'",
+                    "type": "string",
+                    "name": "userParamsMessage",
+                    "required": false
+                  },
+                  "userParams.key": {
+                    "description": "Used in conjunction with userParamsMessage. These are the template parameters. For instance: UserParam.key = 'username', UserParam.value = 'john.doe'",
+                    "type": "array",
+                    "items": {
+                      "description": "Key name of userParam  pair.",
+                      "type": "string"
+                    },
+                    "name": "userParams.key",
+                    "required": false
+                  },
+                  "userParams.value": {
+                    "description": "Used in conjunction with userParamsMessage. These are the template parameters. For instance: UserParam.key = 'username', UserParam.value = 'john.doe'",
+                    "type": "array",
+                    "items": {
+                      "description": "Value of userParam  pair.",
+                      "type": "string"
+                    },
+                    "name": "userParams.value",
+                    "required": false
+                  },
+                  "details.errorCode": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "name": "details.errorCode",
+                    "required": false
+                  },
+                  "details.fieldName": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "name": "details.fieldName",
+                    "required": false
+                  },
+                  "details.entityId": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "name": "details.entityId",
+                    "required": false
+                  },
+                  "details.entityName": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "name": "details.entityName",
+                    "required": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "successSchemaFlattened": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "result": "ok",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "TABLE_ID": {
+              "type": "string",
+              "name": "TABLE_ID",
+              "required": false
+            },
+            "KEY": {
+              "type": "string",
+              "name": "KEY",
+              "required": false
+            },
+            "CALL_START_TIME": {
+              "type": "string",
+              "name": "CALL_START_TIME",
+              "required": false
+            },
+            "CALL_END_TIME": {
+              "type": "string",
+              "name": "CALL_END_TIME",
+              "required": false
+            },
+            "DISCONNECT_TYPE": {
+              "type": "string",
+              "name": "DISCONNECT_TYPE",
+              "required": false
+            },
+            "DROP_CATEGORY": {
+              "type": "string",
+              "name": "DROP_CATEGORY",
+              "required": false
+            },
+            "ERROR_CODE": {
+              "type": "string",
+              "name": "ERROR_CODE",
+              "required": false
+            },
+            "ERROR_MESSAGE": {
+              "type": "string",
+              "name": "ERROR_MESSAGE",
+              "required": false
+            },
+            "DIRECTION": {
+              "type": "string",
+              "name": "DIRECTION",
+              "required": false
+            },
+            "ANI": {
+              "type": "string",
+              "name": "ANI",
+              "required": false
+            },
+            "DNIS": {
+              "type": "string",
+              "name": "DNIS",
+              "required": false
+            },
+            "QUEUE_NAME": {
+              "type": "string",
+              "name": "QUEUE_NAME",
+              "required": false
+            },
+            "AGENT_NAME": {
+              "type": "string",
+              "name": "AGENT_NAME",
+              "required": false
+            },
+            "LOOKUP_STATUS": {
+              "type": "string",
+              "name": "LOOKUP_STATUS",
+              "required": false
+            }
+          },
+          "additionalProperties": true
+        },
+        "successSchema": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        },
+        "errorSchema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "ErrorBody",
+          "description": "Detailed information about an error response.",
+          "type": "object",
+          "required": [
+            "errorCode",
+            "status",
+            "userMessage"
+          ],
+          "properties": {
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "name": "errors",
+              "required": false
+            },
+            "errorCode": {
+              "description": "A code unique to this error.",
+              "type": "string",
+              "name": "errorCode",
+              "required": false
+            },
+            "status": {
+              "description": "The HTTP status code for this message (400, 401, 403, 404, 500, etc.)",
+              "type": "integer",
+              "name": "status",
+              "required": false
+            },
+            "correlationId": {
+              "description": "The correlation Id or context Id for this message. If left blank the Public API will look at the HTTP response header 'ININ-Correlation-Id' instead.",
+              "type": "string",
+              "name": "correlationId",
+              "required": false
+            },
+            "entityId": {
+              "description": "The ID of the entity this error refers to. Only used in BackendErrorBody instances within the errors array.",
+              "type": "string",
+              "name": "entityId",
+              "required": false
+            },
+            "entityName": {
+              "description": "The name of the entity this error refers to. Only used in BackendErrorBody instances within the errors array.",
+              "type": "string",
+              "name": "entityName",
+              "required": false
+            },
+            "userMessage": {
+              "description": "A customer friendly message. This should be a complete sentence, use proper grammar and only include information useful to a customer. This is not a dev message and should not include things like Org Id",
+              "type": "string",
+              "name": "userMessage",
+              "required": false
+            },
+            "userParamsMessage": {
+              "description": "This is the same as message except it uses template fields for variable replacement. For instance: 'User {username} was not found'",
+              "type": "string",
+              "name": "userParamsMessage",
+              "required": false
+            },
+            "userParams.key": {
+              "description": "Used in conjunction with userParamsMessage. These are the template parameters. For instance: UserParam.key = 'username', UserParam.value = 'john.doe'",
+              "type": "array",
+              "items": {
+                "description": "Key name of userParam  pair.",
+                "type": "string"
+              },
+              "name": "userParams.key",
+              "required": false
+            },
+            "userParams.value": {
+              "description": "Used in conjunction with userParamsMessage. These are the template parameters. For instance: UserParam.key = 'username', UserParam.value = 'john.doe'",
+              "type": "array",
+              "items": {
+                "description": "Value of userParam  pair.",
+                "type": "string"
+              },
+              "name": "userParams.value",
+              "required": false
+            },
+            "details.errorCode": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "name": "details.errorCode",
+              "required": false
+            },
+            "details.fieldName": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "name": "details.fieldName",
+              "required": false
+            },
+            "details.entityId": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "name": "details.entityId",
+              "required": false
+            },
+            "details.entityName": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "name": "details.entityName",
+              "required": false
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    ],
+    "state": []
+  },
+  "supportedLanguages": [
+    "en-US"
+  ],
+  "manifest": {
+    "dataAction": [
+      {
+        "name": "Get Conversation Drop Details",
+        "id": "custom_-_98adf65a-1349-4c86-9ad3-6db0f5f73a1b",
+        "context": [
+          {
+            "actionName": "Get conversation drop details",
+            "id": "ecaa0d86-87c6-4037-86e9-40b394d71832",
+            "name": "Get conversation drop details"
+          }
+        ]
+      },
+      {
+        "name": "Write Dropped Call Log Row",
+        "id": "custom_-_1674fde0-7eec-4152-9774-884ed1612281",
+        "context": [
+          {
+            "actionName": "Write Dropped Call Log row",
+            "id": "d8857681-f45a-4198-b957-7dc935b088b3",
+            "name": "Write Dropped Call Log row"
+          }
+        ]
+      }
+    ],
+    "language": [
+      {
+        "id": "en-US"
+      }
+    ],
+    "userPrompt": [],
+    "systemPrompt": []
+  },
+  "type": "workflow",
+  "debugSettings": {},
+  "errorHandling": {
+    "queue": {
+      "config": {
+        "emp": {
+          "pos": 1,
+          "text": "",
+          "type": "que"
+        }
+      },
+      "text": "",
+      "type": "que",
+      "uiMetaData": {
+        "mode": 1
+      },
+      "metaData": {},
+      "version": 2,
+      "outOfService": true
+    },
+    "handlingType": "EndWorkflow"
+  },
+  "defaultSettings": {},
+  "flowMetaData": {
+    "flowDocumentVersion": "1.0",
+    "minimumServerVersion": "1.0",
+    "ttsDataVersion": "1.0"
+  },
+  "flowSequenceItemList": [
+    {
+      "startAction": "ecaa0d86-87c6-4037-86e9-40b394d71832",
+      "trackingId": 22,
+      "id": "aca2c49b-977b-404e-9535-7e354946cb06",
+      "name": "Initial State",
+      "uiMetaData": {
+        "collapsed": false
+      },
+      "__type": "State",
+      "actionList": [
+        {
+          "trackingId": 21,
+          "id": "ecaa0d86-87c6-4037-86e9-40b394d71832",
+          "name": "Get conversation drop details",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "DataAction",
+          "actionName": "Get Conversation Drop Details",
+          "actionId": "custom_-_98adf65a-1349-4c86-9ad3-6db0f5f73a1b",
+          "category": {
+            "id": "Genesys Cloud Data Actions",
+            "name": "Genesys Cloud Data Actions"
+          },
+          "useSuggestedTimeout": true,
+          "nextAction": "ed29c53b-cbdf-49f7-b70b-f0357ddcce3d",
+          "errorBindings": [
+            {
+              "name": "errorCode",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "status",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "int"
+                  }
+                },
+                "text": "",
+                "type": "int",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "correlationId",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "entityId",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "entityName",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "userMessage",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "userParamsMessage",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "userParams.key",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "userParams.value",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "details.errorCode",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "details.fieldName",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "details.entityId",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "details.entityName",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            }
+          ],
+          "processingPrompt": {
+            "config": {
+              "emp": {
+                "pos": 1,
+                "text": "",
+                "type": "pmt"
+              }
+            },
+            "text": "",
+            "type": "pmt",
+            "uiMetaData": {
+              "mode": 3
+            },
+            "metaData": {},
+            "version": 2
+          },
+          "inputs": [
+            {
+              "name": "CONVERSATION_ID",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.conversationId",
+                    "type": "str",
+                    "val": "42585f7f-f3f3-43c1-9c4a-1803bd488976"
+                  }
+                },
+                "text": "Flow.conversationId",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "42585f7f-f3f3-43c1-9c4a-1803bd488976",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.conversationId"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "name": "errorCode",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.errorCode",
+                    "type": "str",
+                    "val": "82447243-b519-44c0-8f3c-13ce5ac01fe9"
+                  }
+                },
+                "text": "Flow.errorCode",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "82447243-b519-44c0-8f3c-13ce5ac01fe9",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.errorCode"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "errorMessage",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.errorMessage",
+                    "type": "str",
+                    "val": "94bb7201-e95c-40bd-84eb-b168228316d6"
+                  }
+                },
+                "text": "Flow.errorMessage",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "94bb7201-e95c-40bd-84eb-b168228316d6",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.errorMessage"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "callStartTime",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.callStartTime",
+                    "type": "str",
+                    "val": "64b0c3bf-856f-40de-8d57-e88f28600fe8"
+                  }
+                },
+                "text": "Flow.callStartTime",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "64b0c3bf-856f-40de-8d57-e88f28600fe8",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.callStartTime"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "callEndTime",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.callEndTime",
+                    "type": "str",
+                    "val": "2f2c7792-4c8c-4d1c-b722-8810ec327884"
+                  }
+                },
+                "text": "Flow.callEndTime",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "2f2c7792-4c8c-4d1c-b722-8810ec327884",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.callEndTime"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "queueName",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.queueName",
+                    "type": "str",
+                    "val": "e576963f-3071-46c4-8bf3-c44cd6494c8a"
+                  }
+                },
+                "text": "Flow.queueName",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "e576963f-3071-46c4-8bf3-c44cd6494c8a",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.queueName"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "agentName",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.agentName",
+                    "type": "str",
+                    "val": "6ba93101-e398-46b3-946a-1dfcf7aef7c9"
+                  }
+                },
+                "text": "Flow.agentName",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "6ba93101-e398-46b3-946a-1dfcf7aef7c9",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.agentName"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            }
+          ],
+          "timeout": {
+            "config": {
+              "lit": {
+                "pos": 1,
+                "text": "P0D0H1M0S0F",
+                "type": "dur"
+              }
+            },
+            "text": "P0D0H1M0S0F",
+            "type": "dur",
+            "uiMetaData": {
+              "mode": 1
+            },
+            "metaData": {},
+            "version": 2
+          },
+          "paths": [
+            {
+              "nextActionId": "53ea1d1f-4992-46e6-b4da-f0cd7ff3d346",
+              "label": "Success",
+              "outputId": "__SUCCESS__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            },
+            {
+              "nextActionId": "e5cf255e-f3b1-4b38-ad78-5a683fcfb44e",
+              "label": "Failure",
+              "outputId": "__FAILURE__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            },
+            {
+              "nextActionId": "e4d529f4-3a12-4418-b499-0adf061948da",
+              "label": "Timeout",
+              "outputId": "__TIMEOUT__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            }
+          ]
+        },
+        {
+          "trackingId": 18,
+          "id": "53ea1d1f-4992-46e6-b4da-f0cd7ff3d346",
+          "name": "Lookup OK",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "UpdateVariableAction",
+          "variables": [
+            {
+              "expression": {
+                "config": {
+                  "lit": {
+                    "pos": 1,
+                    "text": "OK",
+                    "type": "str"
+                  }
+                },
+                "text": "OK",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 1
+                },
+                "metaData": {},
+                "version": 2
+              },
+              "variable": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.lookupStatus",
+                    "type": "str",
+                    "val": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265"
+                  }
+                },
+                "text": "Flow.lookupStatus",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.lookupStatus"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            }
+          ]
+        },
+        {
+          "trackingId": 19,
+          "id": "e5cf255e-f3b1-4b38-ad78-5a683fcfb44e",
+          "name": "Lookup failed",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "UpdateVariableAction",
+          "variables": [
+            {
+              "expression": {
+                "config": {
+                  "lit": {
+                    "pos": 1,
+                    "text": "LOOKUP_FAILED",
+                    "type": "str"
+                  }
+                },
+                "text": "LOOKUP_FAILED",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 1
+                },
+                "metaData": {},
+                "version": 2
+              },
+              "variable": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.lookupStatus",
+                    "type": "str",
+                    "val": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265"
+                  }
+                },
+                "text": "Flow.lookupStatus",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.lookupStatus"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "expression": {
+                "config": {
+                  "lit": {
+                    "pos": 1,
+                    "text": "Could not read the conversation. Check the data action, its OAuth client permissions and the integration status.",
+                    "type": "str"
+                  }
+                },
+                "text": "Could not read the conversation. Check the data action, its OAuth client permissions and the integration status.",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 1
+                },
+                "metaData": {},
+                "version": 2
+              },
+              "variable": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.errorMessage",
+                    "type": "str",
+                    "val": "94bb7201-e95c-40bd-84eb-b168228316d6"
+                  }
+                },
+                "text": "Flow.errorMessage",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "94bb7201-e95c-40bd-84eb-b168228316d6",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.errorMessage"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            }
+          ]
+        },
+        {
+          "trackingId": 20,
+          "id": "e4d529f4-3a12-4418-b499-0adf061948da",
+          "name": "Lookup timed out",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "UpdateVariableAction",
+          "variables": [
+            {
+              "expression": {
+                "config": {
+                  "lit": {
+                    "pos": 1,
+                    "text": "LOOKUP_TIMEOUT",
+                    "type": "str"
+                  }
+                },
+                "text": "LOOKUP_TIMEOUT",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 1
+                },
+                "metaData": {},
+                "version": 2
+              },
+              "variable": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.lookupStatus",
+                    "type": "str",
+                    "val": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265"
+                  }
+                },
+                "text": "Flow.lookupStatus",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.lookupStatus"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "expression": {
+                "config": {
+                  "lit": {
+                    "pos": 1,
+                    "text": "Conversation lookup timed out.",
+                    "type": "str"
+                  }
+                },
+                "text": "Conversation lookup timed out.",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 1
+                },
+                "metaData": {},
+                "version": 2
+              },
+              "variable": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.errorMessage",
+                    "type": "str",
+                    "val": "94bb7201-e95c-40bd-84eb-b168228316d6"
+                  }
+                },
+                "text": "Flow.errorMessage",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "94bb7201-e95c-40bd-84eb-b168228316d6",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.errorMessage"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            }
+          ]
+        },
+        {
+          "trackingId": 17,
+          "id": "ed29c53b-cbdf-49f7-b70b-f0357ddcce3d",
+          "name": "Classify drop category",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "UpdateVariableAction",
+          "nextAction": "60bd8277-0a30-4d8b-b2ae-40bbb7211b4f",
+          "variables": [
+            {
+              "expression": {
+                "config": {
+                  "If": {
+                    "pos": 1,
+                    "operands": [
+                      {
+                        "==": {
+                          "pos": 24,
+                          "operands": [
+                            {
+                              "ref": {
+                                "pos": 4,
+                                "text": "Flow.disconnectType",
+                                "type": "str",
+                                "val": "fff00352-ef77-4ccb-8383-adfb65efd4ee"
+                              }
+                            },
+                            {
+                              "lit": {
+                                "pos": 27,
+                                "text": "ERROR",
+                                "type": "str"
+                              }
+                            }
+                          ],
+                          "type": "bln"
+                        }
+                      },
+                      {
+                        "lit": {
+                          "pos": 36,
+                          "text": "Platform error (ERROR)",
+                          "type": "str"
+                        }
+                      },
+                      {
+                        "If": {
+                          "pos": 62,
+                          "operands": [
+                            {
+                              "==": {
+                                "pos": 85,
+                                "operands": [
+                                  {
+                                    "ref": {
+                                      "pos": 65,
+                                      "text": "Flow.disconnectType",
+                                      "type": "str",
+                                      "val": "fff00352-ef77-4ccb-8383-adfb65efd4ee"
+                                    }
+                                  },
+                                  {
+                                    "lit": {
+                                      "pos": 88,
+                                      "text": "SYSTEM",
+                                      "type": "str"
+                                    }
+                                  }
+                                ],
+                                "type": "bln"
+                              }
+                            },
+                            {
+                              "lit": {
+                                "pos": 98,
+                                "text": "System disconnect (SYSTEM)",
+                                "type": "str"
+                              }
+                            },
+                            {
+                              "If": {
+                                "pos": 128,
+                                "operands": [
+                                  {
+                                    "==": {
+                                      "pos": 151,
+                                      "operands": [
+                                        {
+                                          "ref": {
+                                            "pos": 131,
+                                            "text": "Flow.disconnectType",
+                                            "type": "str",
+                                            "val": "fff00352-ef77-4ccb-8383-adfb65efd4ee"
+                                          }
+                                        },
+                                        {
+                                          "lit": {
+                                            "pos": 154,
+                                            "text": "TIMEOUT",
+                                            "type": "str"
+                                          }
+                                        }
+                                      ],
+                                      "type": "bln"
+                                    }
+                                  },
+                                  {
+                                    "lit": {
+                                      "pos": 165,
+                                      "text": "Timeout (TIMEOUT)",
+                                      "type": "str"
+                                    }
+                                  },
+                                  {
+                                    "If": {
+                                      "pos": 186,
+                                      "operands": [
+                                        {
+                                          "==": {
+                                            "pos": 209,
+                                            "operands": [
+                                              {
+                                                "ref": {
+                                                  "pos": 189,
+                                                  "text": "Flow.disconnectType",
+                                                  "type": "str",
+                                                  "val": "fff00352-ef77-4ccb-8383-adfb65efd4ee"
+                                                }
+                                              },
+                                              {
+                                                "lit": {
+                                                  "pos": 212,
+                                                  "text": "TRANSPORT_FAILURE",
+                                                  "type": "str"
+                                                }
+                                              }
+                                            ],
+                                            "type": "bln"
+                                          }
+                                        },
+                                        {
+                                          "lit": {
+                                            "pos": 233,
+                                            "text": "Transport failure (TRANSPORT_FAILURE)",
+                                            "type": "str"
+                                          }
+                                        },
+                                        {
+                                          "If": {
+                                            "pos": 274,
+                                            "operands": [
+                                              {
+                                                "==": {
+                                                  "pos": 297,
+                                                  "operands": [
+                                                    {
+                                                      "ref": {
+                                                        "pos": 277,
+                                                        "text": "Flow.disconnectType",
+                                                        "type": "str",
+                                                        "val": "fff00352-ef77-4ccb-8383-adfb65efd4ee"
+                                                      }
+                                                    },
+                                                    {
+                                                      "lit": {
+                                                        "pos": 300,
+                                                        "text": "PEER",
+                                                        "type": "str"
+                                                      }
+                                                    }
+                                                  ],
+                                                  "type": "bln"
+                                                }
+                                              },
+                                              {
+                                                "lit": {
+                                                  "pos": 308,
+                                                  "text": "Disconnected by our participant (PEER)",
+                                                  "type": "str"
+                                                }
+                                              },
+                                              {
+                                                "If": {
+                                                  "pos": 350,
+                                                  "operands": [
+                                                    {
+                                                      "==": {
+                                                        "pos": 373,
+                                                        "operands": [
+                                                          {
+                                                            "ref": {
+                                                              "pos": 353,
+                                                              "text": "Flow.disconnectType",
+                                                              "type": "str",
+                                                              "val": "fff00352-ef77-4ccb-8383-adfb65efd4ee"
+                                                            }
+                                                          },
+                                                          {
+                                                            "lit": {
+                                                              "pos": 376,
+                                                              "text": "CLIENT",
+                                                              "type": "str"
+                                                            }
+                                                          }
+                                                        ],
+                                                        "type": "bln"
+                                                      }
+                                                    },
+                                                    {
+                                                      "lit": {
+                                                        "pos": 386,
+                                                        "text": "Disconnected by client or API (CLIENT)",
+                                                        "type": "str"
+                                                      }
+                                                    },
+                                                    {
+                                                      "ref": {
+                                                        "pos": 428,
+                                                        "text": "Flow.disconnectType",
+                                                        "type": "str",
+                                                        "val": "fff00352-ef77-4ccb-8383-adfb65efd4ee"
+                                                      }
+                                                    }
+                                                  ],
+                                                  "type": "str"
+                                                }
+                                              }
+                                            ],
+                                            "type": "str"
+                                          }
+                                        }
+                                      ],
+                                      "type": "str"
+                                    }
+                                  }
+                                ],
+                                "type": "str"
+                              }
+                            }
+                          ],
+                          "type": "str"
+                        }
+                      }
+                    ],
+                    "type": "str",
+                    "text": "If(Flow.disconnectType == \"ERROR\", \"Platform error (ERROR)\", If(Flow.disconnectType == \"SYSTEM\", \"System disconnect (SYSTEM)\", If(Flow.disconnectType == \"TIMEOUT\", \"Timeout (TIMEOUT)\", If(Flow.disconnectType == \"TRANSPORT_FAILURE\", \"Transport failure (TRANSPORT_FAILURE)\", If(Flow.disconnectType == \"PEER\", \"Disconnected by our participant (PEER)\", If(Flow.disconnectType == \"CLIENT\", \"Disconnected by client or API (CLIENT)\", Flow.disconnectType))))))"
+                  }
+                },
+                "text": "If(Flow.disconnectType == \"ERROR\", \"Platform error (ERROR)\", If(Flow.disconnectType == \"SYSTEM\", \"System disconnect (SYSTEM)\", If(Flow.disconnectType == \"TIMEOUT\", \"Timeout (TIMEOUT)\", If(Flow.disconnectType == \"TRANSPORT_FAILURE\", \"Transport failure (TRANSPORT_FAILURE)\", If(Flow.disconnectType == \"PEER\", \"Disconnected by our participant (PEER)\", If(Flow.disconnectType == \"CLIENT\", \"Disconnected by client or API (CLIENT)\", Flow.disconnectType))))))",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "fff00352-ef77-4ccb-8383-adfb65efd4ee",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.disconnectType"
+                    }
+                  ]
+                },
+                "version": 2
+              },
+              "variable": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.dropCategory",
+                    "type": "str",
+                    "val": "29c97991-2e59-4273-abd5-b4fbc1f7e192"
+                  }
+                },
+                "text": "Flow.dropCategory",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 2
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "29c97991-2e59-4273-abd5-b4fbc1f7e192",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.dropCategory"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            }
+          ]
+        },
+        {
+          "trackingId": 16,
+          "id": "60bd8277-0a30-4d8b-b2ae-40bbb7211b4f",
+          "name": "No error attribute on the call?",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "DecisionAction",
+          "nextAction": "d8857681-f45a-4198-b957-7dc935b088b3",
+          "expression": {
+            "config": {
+              "IsNotSetOrEmpty": {
+                "pos": 1,
+                "operands": [
+                  {
+                    "ref": {
+                      "pos": 17,
+                      "text": "Flow.errorCode",
+                      "type": "str",
+                      "val": "82447243-b519-44c0-8f3c-13ce5ac01fe9"
+                    }
+                  }
+                ],
+                "type": "bln",
+                "text": "IsNotSetOrEmpty(Flow.errorCode)"
+              }
+            },
+            "text": "IsNotSetOrEmpty(Flow.errorCode)",
+            "type": "bln",
+            "uiMetaData": {
+              "mode": 0
+            },
+            "metaData": {
+              "references": [
+                {
+                  "id": "82447243-b519-44c0-8f3c-13ce5ac01fe9",
+                  "type": "str",
+                  "isSysRef": false,
+                  "name": "Flow.errorCode"
+                }
+              ]
+            },
+            "version": 2
+          },
+          "paths": [
+            {
+              "nextActionId": "ed6ef2bc-6a96-4239-ad33-bd86b6a8dd71",
+              "label": "Yes",
+              "outputId": "__YES__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            },
+            {
+              "label": "No",
+              "outputId": "__NO__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            }
+          ]
+        },
+        {
+          "trackingId": 15,
+          "id": "ed6ef2bc-6a96-4239-ad33-bd86b6a8dd71",
+          "name": "Log anyway (setting on, or lookup failed)?",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "DecisionAction",
+          "expression": {
+            "config": {
+              "If": {
+                "pos": 1,
+                "operands": [
+                  {
+                    "==": {
+                      "pos": 33,
+                      "operands": [
+                        {
+                          "ref": {
+                            "pos": 4,
+                            "text": "Flow.logWhenNoErrorAttribute",
+                            "type": "str",
+                            "val": "e621fab5-f79d-4397-a478-ef657cf5c779"
+                          }
+                        },
+                        {
+                          "lit": {
+                            "pos": 36,
+                            "text": "true",
+                            "type": "str"
+                          }
+                        }
+                      ],
+                      "type": "bln"
+                    }
+                  },
+                  {
+                    "lit": {
+                      "pos": 44,
+                      "text": "true",
+                      "type": "bln"
+                    }
+                  },
+                  {
+                    "If": {
+                      "pos": 50,
+                      "operands": [
+                        {
+                          "==": {
+                            "pos": 71,
+                            "operands": [
+                              {
+                                "ref": {
+                                  "pos": 53,
+                                  "text": "Flow.lookupStatus",
+                                  "type": "str",
+                                  "val": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265"
+                                }
+                              },
+                              {
+                                "lit": {
+                                  "pos": 74,
+                                  "text": "OK",
+                                  "type": "str"
+                                }
+                              }
+                            ],
+                            "type": "bln"
+                          }
+                        },
+                        {
+                          "lit": {
+                            "pos": 80,
+                            "text": "false",
+                            "type": "bln"
+                          }
+                        },
+                        {
+                          "lit": {
+                            "pos": 87,
+                            "text": "true",
+                            "type": "bln"
+                          }
+                        }
+                      ],
+                      "type": "bln"
+                    }
+                  }
+                ],
+                "type": "bln",
+                "text": "If(Flow.logWhenNoErrorAttribute == \"true\", true, If(Flow.lookupStatus == \"OK\", false, true))"
+              }
+            },
+            "text": "If(Flow.logWhenNoErrorAttribute == \"true\", true, If(Flow.lookupStatus == \"OK\", false, true))",
+            "type": "bln",
+            "uiMetaData": {
+              "mode": 0
+            },
+            "metaData": {
+              "references": [
+                {
+                  "id": "e621fab5-f79d-4397-a478-ef657cf5c779",
+                  "type": "str",
+                  "isSysRef": false,
+                  "name": "Flow.logWhenNoErrorAttribute"
+                },
+                {
+                  "id": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265",
+                  "type": "str",
+                  "isSysRef": false,
+                  "name": "Flow.lookupStatus"
+                }
+              ]
+            },
+            "version": 2
+          },
+          "paths": [
+            {
+              "label": "Yes",
+              "outputId": "__YES__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            },
+            {
+              "nextActionId": "ad75e79d-0e7a-4117-83b2-f5ec3a734562",
+              "label": "No",
+              "outputId": "__NO__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            }
+          ]
+        },
+        {
+          "trackingId": 13,
+          "id": "ad75e79d-0e7a-4117-83b2-f5ec3a734562",
+          "name": "End - no error attribute",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "EndWorkflowAction",
+          "exitReason": {
+            "config": {
+              "lit": {
+                "pos": 1,
+                "text": "NoErrorAttribute",
+                "type": "str"
+              }
+            },
+            "text": "NoErrorAttribute",
+            "type": "str",
+            "uiMetaData": {
+              "mode": 1
+            },
+            "metaData": {},
+            "version": 2
+          }
+        },
+        {
+          "trackingId": 14,
+          "id": "d8857681-f45a-4198-b957-7dc935b088b3",
+          "name": "Write Dropped Call Log row",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "DataAction",
+          "actionName": "Write Dropped Call Log Row",
+          "actionId": "custom_-_1674fde0-7eec-4152-9774-884ed1612281",
+          "category": {
+            "id": "Genesys Cloud Data Actions",
+            "name": "Genesys Cloud Data Actions"
+          },
+          "useSuggestedTimeout": true,
+          "nextAction": "233f4781-88ea-40ab-96b8-a21f8674535d",
+          "errorBindings": [
+            {
+              "name": "errorCode",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "status",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "int"
+                  }
+                },
+                "text": "",
+                "type": "int",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "correlationId",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "entityId",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "entityName",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "userMessage",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "userParamsMessage",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str"
+                  }
+                },
+                "text": "",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "userParams.key",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "userParams.value",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "details.errorCode",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "details.fieldName",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "details.entityId",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            },
+            {
+              "name": "details.entityName",
+              "value": {
+                "config": {
+                  "emp": {
+                    "pos": 1,
+                    "text": "",
+                    "type": "str_coll"
+                  }
+                },
+                "text": "",
+                "type": "str_coll",
+                "uiMetaData": {
+                  "mode": 3
+                },
+                "metaData": {},
+                "version": 2
+              }
+            }
+          ],
+          "processingPrompt": {
+            "config": {
+              "emp": {
+                "pos": 1,
+                "text": "",
+                "type": "pmt"
+              }
+            },
+            "text": "",
+            "type": "pmt",
+            "uiMetaData": {
+              "mode": 3
+            },
+            "metaData": {},
+            "version": 2
+          },
+          "inputs": [
+            {
+              "name": "TABLE_ID",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.logTableId",
+                    "type": "str",
+                    "val": "90714ac4-7f62-4ecf-b032-a506de3872c7"
+                  }
+                },
+                "text": "Flow.logTableId",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "90714ac4-7f62-4ecf-b032-a506de3872c7",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.logTableId"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "KEY",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.conversationId",
+                    "type": "str",
+                    "val": "42585f7f-f3f3-43c1-9c4a-1803bd488976"
+                  }
+                },
+                "text": "Flow.conversationId",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "42585f7f-f3f3-43c1-9c4a-1803bd488976",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.conversationId"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "CALL_START_TIME",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.callStartTime",
+                    "type": "str",
+                    "val": "64b0c3bf-856f-40de-8d57-e88f28600fe8"
+                  }
+                },
+                "text": "Flow.callStartTime",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "64b0c3bf-856f-40de-8d57-e88f28600fe8",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.callStartTime"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "CALL_END_TIME",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.callEndTime",
+                    "type": "str",
+                    "val": "2f2c7792-4c8c-4d1c-b722-8810ec327884"
+                  }
+                },
+                "text": "Flow.callEndTime",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "2f2c7792-4c8c-4d1c-b722-8810ec327884",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.callEndTime"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "DISCONNECT_TYPE",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.disconnectType",
+                    "type": "str",
+                    "val": "fff00352-ef77-4ccb-8383-adfb65efd4ee"
+                  }
+                },
+                "text": "Flow.disconnectType",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "fff00352-ef77-4ccb-8383-adfb65efd4ee",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.disconnectType"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "DROP_CATEGORY",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.dropCategory",
+                    "type": "str",
+                    "val": "29c97991-2e59-4273-abd5-b4fbc1f7e192"
+                  }
+                },
+                "text": "Flow.dropCategory",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "29c97991-2e59-4273-abd5-b4fbc1f7e192",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.dropCategory"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "ERROR_CODE",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.errorCode",
+                    "type": "str",
+                    "val": "82447243-b519-44c0-8f3c-13ce5ac01fe9"
+                  }
+                },
+                "text": "Flow.errorCode",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "82447243-b519-44c0-8f3c-13ce5ac01fe9",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.errorCode"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "ERROR_MESSAGE",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.errorMessage",
+                    "type": "str",
+                    "val": "94bb7201-e95c-40bd-84eb-b168228316d6"
+                  }
+                },
+                "text": "Flow.errorMessage",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "94bb7201-e95c-40bd-84eb-b168228316d6",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.errorMessage"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "DIRECTION",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.direction",
+                    "type": "str",
+                    "val": "b7ba81c2-672e-4519-b99b-e9958947b8e4"
+                  }
+                },
+                "text": "Flow.direction",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "b7ba81c2-672e-4519-b99b-e9958947b8e4",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.direction"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "ANI",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.ani",
+                    "type": "str",
+                    "val": "b14e9325-9377-4419-92b7-979f4d597a3f"
+                  }
+                },
+                "text": "Flow.ani",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "b14e9325-9377-4419-92b7-979f4d597a3f",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.ani"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "DNIS",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.dnis",
+                    "type": "str",
+                    "val": "bc49e78f-4c71-422e-b48b-34a9e92fbe29"
+                  }
+                },
+                "text": "Flow.dnis",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "bc49e78f-4c71-422e-b48b-34a9e92fbe29",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.dnis"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "QUEUE_NAME",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.queueName",
+                    "type": "str",
+                    "val": "e576963f-3071-46c4-8bf3-c44cd6494c8a"
+                  }
+                },
+                "text": "Flow.queueName",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "e576963f-3071-46c4-8bf3-c44cd6494c8a",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.queueName"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "AGENT_NAME",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.agentName",
+                    "type": "str",
+                    "val": "6ba93101-e398-46b3-946a-1dfcf7aef7c9"
+                  }
+                },
+                "text": "Flow.agentName",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "6ba93101-e398-46b3-946a-1dfcf7aef7c9",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.agentName"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            },
+            {
+              "name": "LOOKUP_STATUS",
+              "value": {
+                "config": {
+                  "ref": {
+                    "pos": 1,
+                    "text": "Flow.lookupStatus",
+                    "type": "str",
+                    "val": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265"
+                  }
+                },
+                "text": "Flow.lookupStatus",
+                "type": "str",
+                "uiMetaData": {
+                  "mode": 0
+                },
+                "metaData": {
+                  "references": [
+                    {
+                      "id": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265",
+                      "type": "str",
+                      "isSysRef": false,
+                      "name": "Flow.lookupStatus"
+                    }
+                  ]
+                },
+                "version": 2
+              }
+            }
+          ],
+          "outputs": [],
+          "timeout": {
+            "config": {
+              "lit": {
+                "pos": 1,
+                "text": "P0D0H1M0S0F",
+                "type": "dur"
+              }
+            },
+            "text": "P0D0H1M0S0F",
+            "type": "dur",
+            "uiMetaData": {
+              "mode": 1
+            },
+            "metaData": {},
+            "version": 2
+          },
+          "paths": [
+            {
+              "label": "Success",
+              "outputId": "__SUCCESS__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            },
+            {
+              "nextActionId": "17322790-1834-4dec-a2c6-c000e9d72737",
+              "label": "Failure",
+              "outputId": "__FAILURE__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            },
+            {
+              "nextActionId": "47f69369-43aa-4847-8ecf-eacc36148fae",
+              "label": "Timeout",
+              "outputId": "__TIMEOUT__",
+              "uiMetaData": {
+                "collapsed": false
+              }
+            }
+          ]
+        },
+        {
+          "trackingId": 11,
+          "id": "17322790-1834-4dec-a2c6-c000e9d72737",
+          "name": "End - log write failed",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "EndWorkflowAction",
+          "exitReason": {
+            "config": {
+              "lit": {
+                "pos": 1,
+                "text": "LogWriteFailed",
+                "type": "str"
+              }
+            },
+            "text": "LogWriteFailed",
+            "type": "str",
+            "uiMetaData": {
+              "mode": 1
+            },
+            "metaData": {},
+            "version": 2
+          }
+        },
+        {
+          "trackingId": 12,
+          "id": "47f69369-43aa-4847-8ecf-eacc36148fae",
+          "name": "End - log write timed out",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "EndWorkflowAction",
+          "exitReason": {
+            "config": {
+              "lit": {
+                "pos": 1,
+                "text": "LogWriteTimeout",
+                "type": "str"
+              }
+            },
+            "text": "LogWriteTimeout",
+            "type": "str",
+            "uiMetaData": {
+              "mode": 1
+            },
+            "metaData": {},
+            "version": 2
+          }
+        },
+        {
+          "trackingId": 10,
+          "id": "233f4781-88ea-40ab-96b8-a21f8674535d",
+          "name": "End - row logged",
+          "uiMetaData": {
+            "collapsed": false
+          },
+          "__type": "EndWorkflowAction",
+          "exitReason": {
+            "config": {
+              "lit": {
+                "pos": 1,
+                "text": "Logged",
+                "type": "str"
+              }
+            },
+            "text": "Logged",
+            "type": "str",
+            "uiMetaData": {
+              "mode": 1
+            },
+            "metaData": {},
+            "version": 2
+          }
+        }
+      ],
+      "variables": []
+    }
+  ],
+  "supportedLanguageOptions": [
+    {
+      "language": "en-US"
+    }
+  ],
+  "variables": [
+    {
+      "id": "42585f7f-f3f3-43c1-9c4a-1803bd488976",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.conversationId",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "0b809af6-46f4-4552-a383-2f04217183b4",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.participantId",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "72ebbb00-5b45-4f47-a96b-3b66598f2d2f",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.sessionId",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "fff00352-ef77-4ccb-8383-adfb65efd4ee",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.disconnectType",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "d27fb42b-410d-4016-a464-3539b1d91423",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.mediaType",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "b7ba81c2-672e-4519-b99b-e9958947b8e4",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.direction",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "b14e9325-9377-4419-92b7-979f4d597a3f",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.ani",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "bc49e78f-4c71-422e-b48b-34a9e92fbe29",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.dnis",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "bd16cf1c-1d7b-4a09-a908-e8f63a5a4d3b",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": true,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.provider",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "90714ac4-7f62-4ecf-b032-a506de3872c7",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.logTableId",
+      "initialValue": {
+        "config": {
+          "lit": {
+            "pos": 1,
+            "text": "REPLACE_WITH_DATA_TABLE_ID",
+            "type": "str"
+          }
+        },
+        "text": "REPLACE_WITH_DATA_TABLE_ID",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 1
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "e621fab5-f79d-4397-a478-ef657cf5c779",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.logWhenNoErrorAttribute",
+      "initialValue": {
+        "config": {
+          "lit": {
+            "pos": 1,
+            "text": "false",
+            "type": "str"
+          }
+        },
+        "text": "false",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 1
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "82447243-b519-44c0-8f3c-13ce5ac01fe9",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.errorCode",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "94bb7201-e95c-40bd-84eb-b168228316d6",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.errorMessage",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "64b0c3bf-856f-40de-8d57-e88f28600fe8",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.callStartTime",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "2f2c7792-4c8c-4d1c-b722-8810ec327884",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.callEndTime",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "e576963f-3071-46c4-8bf3-c44cd6494c8a",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.queueName",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "6ba93101-e398-46b3-946a-1dfcf7aef7c9",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.agentName",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "29c97991-2e59-4273-abd5-b4fbc1f7e192",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.dropCategory",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    },
+    {
+      "id": "56e4fecf-cd25-4bbc-b01a-0ea956ce9265",
+      "isCollection": false,
+      "isInternal": false,
+      "isOutput": false,
+      "isInput": false,
+      "isSecure": false,
+      "version": "1.0",
+      "__type": "StringVariable",
+      "name": "Flow.lookupStatus",
+      "initialValue": {
+        "config": {
+          "emp": {
+            "pos": 1,
+            "text": "",
+            "type": "str"
+          }
+        },
+        "text": "",
+        "type": "str",
+        "uiMetaData": {
+          "mode": 3
+        },
+        "metaData": {},
+        "version": 2
+      }
+    }
+  ]
+}

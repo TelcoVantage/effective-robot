@@ -1,0 +1,2 @@
+ConversationId,CallStartTime,CallEndTime,DisconnectType,DropCategory,ErrorCode,ErrorMessage,Direction,ANI,DNIS,QueueName,AgentName,LookupStatus,Reviewed
+00000000-0000-0000-0000-000000000000,2026-10-28T09:15:02.123Z,2026-10-28T09:17:44.001Z,ERROR,Platform error (ERROR),EXAMPLE_ROW,Example row - delete me after the first real drop is logged,INBOUND,tel:+15551234567,tel:+15557654321,Customer Service,,OK,Yes

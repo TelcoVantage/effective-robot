@@ -1,0 +1,25 @@
+{
+  "name": "Dropped Call Monitor - our-side voice drops",
+  "description": "Runs the Dropped Call Monitor workflow when a voice customer session ends with an our-side disconnect type (ERROR, SYSTEM, TIMEOUT, TRANSPORT_FAILURE). The workflow then checks the ErrorCode participant attribute and logs the call.",
+  "topicName": "v2.detail.events.conversation.{id}.customer.end",
+  "target": {
+    "type": "Workflow",
+    "id": "REPLACE_WITH_WORKFLOW_ID",
+    "workflowTargetSettings": {
+      "dataFormat": "TopLevelPrimitives"
+    }
+  },
+  "matchCriteria": [
+    {
+      "jsonPath": "mediaType",
+      "operator": "Equal",
+      "value": "VOICE"
+    },
+    {
+      "jsonPath": "disconnectType",
+      "operator": "In",
+      "values": ["ERROR", "SYSTEM", "TIMEOUT", "TRANSPORT_FAILURE"]
+    }
+  ],
+  "enabled": false
+}

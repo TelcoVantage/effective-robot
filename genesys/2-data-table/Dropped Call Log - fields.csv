@@ -1,0 +1,15 @@
+Field label (type exactly),Type,Default value,Purpose
+ConversationId,Reference key,,Row key. Genesys conversation ID of the dropped call (search it in Performance > Interactions).
+CallStartTime,String,,Conversation start time (ISO 8601 UTC) from the conversation record.
+CallEndTime,String,,Conversation end time (ISO 8601 UTC). Blank if the agent was still in after-call work when the row was written.
+DisconnectType,String,,Raw disconnectType from the customer.end event (ERROR / SYSTEM / TIMEOUT / TRANSPORT_FAILURE ...).
+DropCategory,String,,Readable category derived from DisconnectType by the workflow.
+ErrorCode,String,,Value of the ErrorCode participant attribute set by your flows.
+ErrorMessage,String,,Value of the ErrorMessage participant attribute (or the lookup failure text).
+Direction,String,,INBOUND or OUTBOUND.
+ANI,String,,Caller number as delivered by the event.
+DNIS,String,,Dialled number as delivered by the event.
+QueueName,String,,First queue the call was in (blank if it never reached a queue).
+AgentName,String,,First agent on the call (blank if it dropped before an agent).
+LookupStatus,String,,OK / LOOKUP_FAILED / LOOKUP_TIMEOUT - health of the conversation lookup data action.
+Reviewed,String,No,For your operations team: set to Yes once the call has been investigated.

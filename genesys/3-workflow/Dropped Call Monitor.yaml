@@ -1,0 +1,288 @@
+#
+# Dropped Call Monitor - Architect workflow (Archy YAML)
+#
+# This is the same workflow as "Dropped Call Monitor.i3WorkFlow", in the YAML format
+# that Genesys Cloud documents for text-authored flows. Use it if you prefer Archy, or
+# as a readable reference of what the workflow does.
+#
+#   archy create --file "Dropped Call Monitor.yaml" --clientId <id> --clientSecret <secret> --location <mypurecloud.com|...>
+#
+# Before importing: set Flow.logTableId (below) to the ID of the "Dropped Call Log" data table
+# and make sure the two data actions exist under the "Genesys Cloud Data Actions" integration.
+#
+workflow:
+  name: Dropped Call Monitor
+  description: >-
+    Triggered by v2.detail.events.conversation.{id}.customer.end for voice calls that ended with an
+    our-side disconnect type. Reads the ErrorCode / ErrorMessage participant attributes and writes a
+    row to the "Dropped Call Log" data table.
+  division: Home
+  startUpRef: "/workflow/states/state[Initial State_10]"
+  defaultLanguage: en-us
+  supportedLanguages:
+    en-us:
+      none: true
+  variables:
+    # ---- Inputs: names must match the top-level primitives of the customer.end event ----
+    - stringVariable:
+        name: Flow.conversationId
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Flow.participantId
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Flow.sessionId
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Flow.disconnectType
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Flow.mediaType
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Flow.direction
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Flow.ani
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Flow.dnis
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    - stringVariable:
+        name: Flow.provider
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: false
+    # ---- Settings ----
+    - stringVariable:
+        name: Flow.logTableId
+        initialValue:
+          lit: REPLACE_WITH_DATA_TABLE_ID
+        isInput: false
+        isOutput: false
+    - stringVariable:
+        name: Flow.logWhenNoErrorAttribute
+        initialValue:
+          lit: "false"
+        isInput: false
+        isOutput: false
+    # ---- Working variables ----
+    - stringVariable:
+        name: Flow.errorCode
+        initialValue:
+          noValue: true
+    - stringVariable:
+        name: Flow.errorMessage
+        initialValue:
+          noValue: true
+    - stringVariable:
+        name: Flow.callStartTime
+        initialValue:
+          noValue: true
+    - stringVariable:
+        name: Flow.callEndTime
+        initialValue:
+          noValue: true
+    - stringVariable:
+        name: Flow.queueName
+        initialValue:
+          noValue: true
+    - stringVariable:
+        name: Flow.agentName
+        initialValue:
+          noValue: true
+    - stringVariable:
+        name: Flow.dropCategory
+        initialValue:
+          noValue: true
+    - stringVariable:
+        name: Flow.lookupStatus
+        initialValue:
+          noValue: true
+  settingsErrorHandling:
+    errorHandling:
+      endWorkflow:
+        none: true
+  states:
+    - state:
+        name: Initial State
+        refId: Initial State_10
+        actions:
+          # 1. Read the conversation: error attributes, times, queue and agent
+          - callData:
+              name: Get conversation drop details
+              timeout:
+                lit:
+                  minutes: 1
+              category:
+                Genesys Cloud Data Actions:
+                  dataAction:
+                    Get Conversation Drop Details:
+                      inputs:
+                        CONVERSATION_ID:
+                          exp: Flow.conversationId
+                      successOutputs:
+                        errorCode:
+                          var: Flow.errorCode
+                        errorMessage:
+                          var: Flow.errorMessage
+                        callStartTime:
+                          var: Flow.callStartTime
+                        callEndTime:
+                          var: Flow.callEndTime
+                        queueName:
+                          var: Flow.queueName
+                        agentName:
+                          var: Flow.agentName
+              outputs:
+                success:
+                  actions:
+                    - updateData:
+                        name: Lookup OK
+                        statements:
+                          - string:
+                              variable: Flow.lookupStatus
+                              value:
+                                lit: OK
+                failure:
+                  actions:
+                    - updateData:
+                        name: Lookup failed
+                        statements:
+                          - string:
+                              variable: Flow.lookupStatus
+                              value:
+                                lit: LOOKUP_FAILED
+                          - string:
+                              variable: Flow.errorMessage
+                              value:
+                                lit: Could not read the conversation. Check the data action, its OAuth client permissions and the integration status.
+                timeout:
+                  actions:
+                    - updateData:
+                        name: Lookup timed out
+                        statements:
+                          - string:
+                              variable: Flow.lookupStatus
+                              value:
+                                lit: LOOKUP_TIMEOUT
+                          - string:
+                              variable: Flow.errorMessage
+                              value:
+                                lit: Conversation lookup timed out.
+          # 2. Readable category for the disconnect type
+          - updateData:
+              name: Classify drop category
+              statements:
+                - string:
+                    variable: Flow.dropCategory
+                    value:
+                      exp: >-
+                        If(Flow.disconnectType == "ERROR", "Platform error (ERROR)",
+                        If(Flow.disconnectType == "SYSTEM", "System disconnect (SYSTEM)",
+                        If(Flow.disconnectType == "TIMEOUT", "Timeout (TIMEOUT)",
+                        If(Flow.disconnectType == "TRANSPORT_FAILURE", "Transport failure (TRANSPORT_FAILURE)",
+                        If(Flow.disconnectType == "PEER", "Disconnected by our participant (PEER)",
+                        If(Flow.disconnectType == "CLIENT", "Disconnected by client or API (CLIENT)",
+                        Flow.disconnectType))))))
+          # 3. Only log calls that carry the error attribute (unless the setting says otherwise,
+          #    or the lookup failed - those are logged so the failure is visible)
+          - decision:
+              name: No error attribute on the call?
+              condition:
+                exp: IsNotSetOrEmpty(Flow.errorCode)
+              outputs:
+                "yes":
+                  actions:
+                    - decision:
+                        name: Log anyway (setting on, or lookup failed)?
+                        condition:
+                          exp: If(Flow.logWhenNoErrorAttribute == "true", true, If(Flow.lookupStatus == "OK", false, true))
+                        outputs:
+                          "no":
+                            actions:
+                              - endWorkflow:
+                                  name: End - no error attribute
+                                  exitReason:
+                                    lit: NoErrorAttribute
+          # 4. Write the row to the data table
+          - callData:
+              name: Write Dropped Call Log row
+              timeout:
+                lit:
+                  minutes: 1
+              category:
+                Genesys Cloud Data Actions:
+                  dataAction:
+                    Write Dropped Call Log Row:
+                      inputs:
+                        TABLE_ID:
+                          exp: Flow.logTableId
+                        KEY:
+                          exp: Flow.conversationId
+                        CALL_START_TIME:
+                          exp: Flow.callStartTime
+                        CALL_END_TIME:
+                          exp: Flow.callEndTime
+                        DISCONNECT_TYPE:
+                          exp: Flow.disconnectType
+                        DROP_CATEGORY:
+                          exp: Flow.dropCategory
+                        ERROR_CODE:
+                          exp: Flow.errorCode
+                        ERROR_MESSAGE:
+                          exp: Flow.errorMessage
+                        DIRECTION:
+                          exp: Flow.direction
+                        ANI:
+                          exp: Flow.ani
+                        DNIS:
+                          exp: Flow.dnis
+                        QUEUE_NAME:
+                          exp: Flow.queueName
+                        AGENT_NAME:
+                          exp: Flow.agentName
+                        LOOKUP_STATUS:
+                          exp: Flow.lookupStatus
+              outputs:
+                failure:
+                  actions:
+                    - endWorkflow:
+                        name: End - log write failed
+                        exitReason:
+                          lit: LogWriteFailed
+                timeout:
+                  actions:
+                    - endWorkflow:
+                        name: End - log write timed out
+                        exitReason:
+                          lit: LogWriteTimeout
+          - endWorkflow:
+              name: End - row logged
+              exitReason:
+                lit: Logged

@@ -1,0 +1,13 @@
+{
+  "eventTime": 1761624000000,
+  "conversationId": "11111111-2222-3333-4444-555555555555",
+  "participantId": "66666666-7777-8888-9999-000000000000",
+  "sessionId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "disconnectType": "ERROR",
+  "mediaType": "VOICE",
+  "provider": "Edge",
+  "direction": "INBOUND",
+  "ani": "tel:+15551234567",
+  "dnis": "tel:+15557654321",
+  "interactingDurationMs": 42000
+}
