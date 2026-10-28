@@ -183,6 +183,28 @@ Cloud. Replace `REPLACE_WITH_WORKFLOW_ID` and set `"enabled": true` when ready.
 To widen the filter, add values to Condition 2. The workflow already labels `PEER` and `CLIENT`
 if you do.
 
+### Optional second trigger: agent-side drops (`user.end`)
+
+`customer.end` describes the customer's leg. When the *agent's* leg dies (browser crash or
+refresh, network loss), Genesys reports it on the agent participant through the
+`v2.detail.events.conversation.{id}.user.end` topic instead, and the customer's leg usually ends
+as `PEER`. To catch those, create a second trigger from
+`genesys/4-trigger/Dropped Call Monitor - agent-side trigger (user.end).json` with the same
+workflow as target:
+
+| Field | Value |
+|---|---|
+| Topic Name | `v2.detail.events.conversation.{id}.user.end` |
+| Condition 1 | JSON Path `mediaType`, Operator `Equal`, Value `VOICE` |
+| Condition 2 | JSON Path `disconnectType`, Operator `In`, Values `["ERROR","TRANSPORT_FAILURE","TIMEOUT","SYSTEM"]` (add `"CLIENT"` to include browser refreshes and closed tabs) |
+
+The workflow runs unchanged: its input variables are a subset of the `user.end` event fields. These
+calls normally carry no `ErrorCode` attribute, so set `Flow.logWhenNoErrorAttribute` to `true` if
+you want them logged. `AgentName` and `QueueName` in the row identify the agent.
+
+Note for testing: force-refreshing an agent's browser only produces a `user.end` event. To exercise
+the `customer.end` path, use a test flow that sets `ErrorCode` and then disconnects (Step 5).
+
 ## Step 5. Verify end to end
 
 1. In a test inbound flow, add *Set Participant Data* with `ErrorCode = TEST` and

@@ -1,0 +1,25 @@
+{
+  "name": "Dropped Call Monitor - agent-side voice drops",
+  "description": "Optional second trigger. Runs the Dropped Call Monitor workflow when an agent's voice session ends abnormally (browser crash or refresh, network loss, platform error). Add CLIENT to the list to include browser refreshes and closed tabs.",
+  "topicName": "v2.detail.events.conversation.{id}.user.end",
+  "target": {
+    "type": "Workflow",
+    "id": "REPLACE_WITH_WORKFLOW_ID",
+    "workflowTargetSettings": {
+      "dataFormat": "TopLevelPrimitives"
+    }
+  },
+  "matchCriteria": [
+    {
+      "jsonPath": "mediaType",
+      "operator": "Equal",
+      "value": "VOICE"
+    },
+    {
+      "jsonPath": "disconnectType",
+      "operator": "In",
+      "values": ["ERROR", "TRANSPORT_FAILURE", "TIMEOUT", "SYSTEM"]
+    }
+  ],
+  "enabled": false
+}
