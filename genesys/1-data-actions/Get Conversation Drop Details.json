@@ -16,7 +16,9 @@
         "queueNames": "$.participants[?(@.purpose=='acd')].name",
         "agentNames": "$.participants[?(@.purpose=='agent')].name",
         "startTime": "$.startTime",
-        "endTime": "$.endTime"
+        "endTime": "$.endTime",
+        "callErrorCodes": "$.participants[*].calls[*].errorInfo.code",
+        "callErrorMessages": "$.participants[*].calls[*].errorInfo.message"
       },
       "translationMapDefaults": {
         "errorCodes": "[]",
@@ -24,9 +26,11 @@
         "queueNames": "[]",
         "agentNames": "[]",
         "startTime": "\"\"",
-        "endTime": "\"\""
+        "endTime": "\"\"",
+        "callErrorCodes": "[]",
+        "callErrorMessages": "[]"
       },
-      "successTemplate": "{\"errorCode\": ${successTemplateUtils.firstFromArray(\"${errorCodes}\", \"${esc.quote}${esc.quote}\")}, \"errorMessage\": ${successTemplateUtils.firstFromArray(\"${errorMessages}\", \"${esc.quote}${esc.quote}\")}, \"queueName\": ${successTemplateUtils.firstFromArray(\"${queueNames}\", \"${esc.quote}${esc.quote}\")}, \"agentName\": ${successTemplateUtils.firstFromArray(\"${agentNames}\", \"${esc.quote}${esc.quote}\")}, \"callStartTime\": #if($startTime)${startTime}#else\"\"#end, \"callEndTime\": #if($endTime)${endTime}#else\"\"#end}"
+      "successTemplate": "#set($attrCode = $successTemplateUtils.firstFromArray(\"${errorCodes}\", \"${esc.quote}${esc.quote}\"))\n#set($attrMsg = $successTemplateUtils.firstFromArray(\"${errorMessages}\", \"${esc.quote}${esc.quote}\"))\n#set($platCode = $successTemplateUtils.firstFromArray(\"${callErrorCodes}\", \"${esc.quote}${esc.quote}\"))\n#set($platMsg = $successTemplateUtils.firstFromArray(\"${callErrorMessages}\", \"${esc.quote}${esc.quote}\"))\n#set($none = '\"\"')\n{\n  \"errorCode\": #if($attrCode != $none)${attrCode}#else${platCode}#end,\n  \"errorMessage\": #if($attrMsg != $none)${attrMsg}#else${platMsg}#end,\n  \"queueName\": ${successTemplateUtils.firstFromArray(\"${queueNames}\", \"${esc.quote}${esc.quote}\")},\n  \"agentName\": ${successTemplateUtils.firstFromArray(\"${agentNames}\", \"${esc.quote}${esc.quote}\")},\n  \"callStartTime\": #if($startTime)${startTime}#else\"\"#end,\n  \"callEndTime\": #if($endTime)${endTime}#else\"\"#end\n}"
     }
   },
   "contract": {

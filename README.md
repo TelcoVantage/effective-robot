@@ -97,6 +97,22 @@ Configuration > Response tab afterwards):
 Only the part after `attributes.` changes. The `[*]` means the attribute is found whichever
 participant it was set on.
 
+**Platform error fallback.** When a call has no custom error attribute, the lookup falls back to
+the platform's own error on the call leg (`participants[].calls[].errorInfo.code` and `.message`,
+for example `error.ininedge.connection.sip.timeout`). So `errorCode` in the log is: your attribute
+if set, otherwise the Genesys call error, otherwise empty. To find what your flows actually set,
+open a dropped call in Performance > Interactions and look at its participant data.
+
+If you later need even more detail (per-segment error codes, flow exit reasons), the analytics
+record `GET /api/v2/analytics/conversations/{conversationId}/details` exposes
+`participants[].sessions[].segments[].errorCode` and `participants[].sessions[].flow.exitReason`.
+That is a second data action and an extra Call Data Action in the workflow; it is not included
+because analytics data can lag the real-time event by a few minutes.
+
+To update an action that is already published: open it, Summary tab > **Import**, select the
+updated JSON file, then Save & Publish. Contracts (inputs/outputs) are unchanged, so the workflow
+keeps working.
+
 ## Step 3. Import the workflow (5 min)
 
 1. Admin > Architect > Flows: **Workflow** > **Add**. Name it `Dropped Call Monitor`, click
